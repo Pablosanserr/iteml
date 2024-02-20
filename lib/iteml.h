@@ -36,7 +36,8 @@
 // Tab type
 #define ITEML_TEXT 1
 #define ITEML_LOG 2
-#define ITEML_LIST 3
+#define ITEML_SIMPLE_LIST 3
+#define ITEML_DATA_LIST 4
 
 typedef struct{
     char * key;

@@ -217,7 +217,19 @@ void iteml_create_menu(int argc, ...){
                 lv_obj_set_size(log, lv_pct(100), lv_pct(100));
                 if(t.content) lv_textarea_set_text(log, t.content);
                 break;
-            case ITEML_LIST:
+            case ITEML_SIMPLE_LIST:
+                iteml_pair * sl = (iteml_pair *) t.list.pair;
+
+                lv_obj_t * simple_list = lv_list_create(tab);
+                lv_obj_set_size(simple_list, lv_pct(100), lv_pct(100));
+
+                for(int i = 0; i < t.list.len; i++) {
+                    char buf[32];
+                    //lv_list_add_btn(simple_list, LV_SYMBOL_LIST, sl[i].key);
+                    lv_list_add_btn(simple_list, NULL, sl[i].key);
+                }
+                break;
+            case ITEML_DATA_LIST:
                 iteml_pair * l = (iteml_pair *) t.list.pair;
 
                 // Create info label
@@ -239,7 +251,6 @@ void iteml_create_menu(int argc, ...){
                     lv_obj_set_width(btn, lv_pct(50));
                     lv_obj_set_width(btn, lv_pct(100));
                     lv_obj_add_event_cb(btn, iteml_list_btn_handler, LV_EVENT_CLICKED, (void *) info_label);
-                    //lv_obj_add_event_cb(btn, iteml_list_btn_handler, LV_EVENT_CLICKED, NULL);
                     lv_obj_set_user_data(btn, (void *) l[j].value);
 
                     lv_obj_t * lab = lv_label_create(btn);
