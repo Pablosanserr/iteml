@@ -34,6 +34,7 @@
 #define ITEML_ERROR -1
 
 // Tab type
+#define ITEML_CUSTOM 0
 #define ITEML_TEXT 1
 #define ITEML_LOG 2
 #define ITEML_SIMPLE_LIST 3
@@ -100,5 +101,7 @@ void iteml_log_write(const char * buffer);
  * @param text Text displayed
 */
 int iteml_set_text(int tab_id, const char * text);
+
+void iteml_get_tab(int tab_id, lv_obj_t ** content);
 
 #endif

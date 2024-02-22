@@ -201,6 +201,9 @@ void iteml_create_menu(int argc, ...){
         // Add tab
         lv_obj_t * tab = lv_tabview_add_tab(main_tabview, t.name);
         switch(t.type){
+            case ITEML_CUSTOM:
+                // Nothing is created. The user can get the tab via iteml_get_tab and modify it as required, using LVGL.
+                break;
             case ITEML_TEXT:
                 lv_obj_t * label = lv_label_create(tab);
                 lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP); //Break the long lines
@@ -287,4 +290,9 @@ int iteml_set_text(int tab_id, const char * text){
 
     lv_label_set_text(label, text);
     return ITEML_OK;
+}
+
+void iteml_get_tab(int tab_id, lv_obj_t ** content){
+    lv_obj_t * tabs_container = lv_tabview_get_content(main_tabview); // Object containing tabs
+    *content = lv_obj_get_child(tabs_container, tab_id); // Desired tab
 }
