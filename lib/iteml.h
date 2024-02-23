@@ -102,6 +102,12 @@ void iteml_log_write(const char * buffer);
 */
 int iteml_set_text(int tab_id, const char * text);
 
+/**
+ * @brief Returns an object that contains the objects of the selected tab.
+ * 
+ * @param tab_id Tab identifier
+ * @param text Tab container
+*/
 void iteml_get_tab(int tab_id, lv_obj_t ** content);
 
 #endif

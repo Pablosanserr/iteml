@@ -292,7 +292,7 @@ int iteml_set_text(int tab_id, const char * text){
     return ITEML_OK;
 }
 
-void iteml_get_tab(int tab_id, lv_obj_t ** content){
+void iteml_get_tab(int tab_id, lv_obj_t ** content){ // TODO: If tab_id is too large, return error
     lv_obj_t * tabs_container = lv_tabview_get_content(main_tabview); // Object containing tabs
     *content = lv_obj_get_child(tabs_container, tab_id); // Desired tab
 }
