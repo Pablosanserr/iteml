@@ -23,6 +23,10 @@ void iteml_init(const char * text);
 */
 static void iteml_ta_event_cb(lv_event_t * e);
 /**
+ * @brief Button matrix event callback
+*/
+static void iteml_btnm_handler(lv_event_t * e);
+/**
  * @brief Get text written by user via touch screen keyboard
  * 
  * @param buffer Text entered by user
@@ -151,8 +155,7 @@ void iteml_get_text_kb(char * buffer, const char * displayed_text){
 	iteml_createLabel("Intuitive Touchscreen Embedded Menu Library"); // TODO
 }
 
-static void iteml_list_btn_handler(lv_event_t * e)
-{
+static void iteml_list_btn_handler(lv_event_t * e){
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_target(e);
     lv_obj_t * info_label = lv_event_get_user_data(e);
@@ -179,6 +182,17 @@ static void iteml_list_btn_handler(lv_event_t * e)
                 lv_obj_clear_state(child, LV_STATE_CHECKED);
             }
         }
+    }
+}
+
+static void iteml_btnm_handler(lv_event_t * e){
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_target(e);
+    void (* callback)(int) = lv_event_get_user_data(e);
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+        //const char * txt = lv_btnmatrix_get_btn_text(obj, id);
+        callback(id);
     }
 }
 
@@ -264,6 +278,14 @@ void iteml_create_menu(int argc, ...){
                 currentButton = lv_obj_get_child(btn_list, 0);
                 lv_obj_add_state(currentButton, LV_STATE_CHECKED);
                 break;
+
+            case ITEML_BUTTON_MATRIX:
+                lv_obj_t * btnm = lv_btnmatrix_create(tab);
+                lv_btnmatrix_set_map(btnm, t.btnm.map);
+                lv_obj_set_size(btnm, lv_pct(100), lv_pct(100));
+                lv_obj_align(btnm, LV_ALIGN_CENTER, 0, 0);
+                lv_obj_add_event_cb(btnm, iteml_btnm_handler, LV_EVENT_ALL, t.btnm.cb);
+                break;
         }
     }
 
@@ -289,6 +311,19 @@ int iteml_set_text(int tab_id, const char * text){
     }
 
     lv_label_set_text(label, text);
+    return ITEML_OK;
+}
+
+int iteml_set_btnm_map(int tab_id, const char * map){    
+    lv_obj_t * content = lv_tabview_get_content(main_tabview);
+    lv_obj_t * tab = lv_obj_get_child(content, tab_id);
+    lv_obj_t * btnm = lv_obj_get_child(tab, NULL);
+
+    if (!lv_obj_check_type(btnm, &lv_btnmatrix_class)) {
+        return ITEML_ERROR;
+    }
+
+    lv_btnmatrix_set_map(btnm, map);
     return ITEML_OK;
 }
 

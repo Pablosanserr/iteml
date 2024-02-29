@@ -39,11 +39,12 @@
 #define ITEML_LOG 2
 #define ITEML_SIMPLE_LIST 3
 #define ITEML_DATA_LIST 4
+#define ITEML_BUTTON_MATRIX 5
 
 typedef struct{
     char * key;
     char * value;
-}iteml_pair;
+} iteml_pair;
 
 typedef struct{
     uint16_t len;
@@ -51,11 +52,17 @@ typedef struct{
 } iteml_list;
 
 typedef struct{
+    char ** map;
+    void (* cb)(int);
+} iteml_btnm;
+
+typedef struct{
     uint16_t type;
     char * name;
     union{
         char * content;
         iteml_list list;
+        iteml_btnm btnm;
     };
 } iteml_t;
 
@@ -101,6 +108,14 @@ void iteml_log_write(const char * buffer);
  * @param text Text displayed
 */
 int iteml_set_text(int tab_id, const char * text);
+
+/**
+ * @brief Sets button map in the specified tab. A menu must have been previously created.
+ * 
+ * @param tab_id Id of the tab to modify
+ * @param map New button matrix map
+*/
+int iteml_set_btnm_map(int tab_id, const char * map);
 
 /**
  * @brief Returns an object that contains the objects of the selected tab.
