@@ -18,6 +18,10 @@ char board[3][3] = {{' ',' ',' '},
 					{' ',' ',' '}};
 int player_turn = 1;
 
+int w1 = 0; // Player's 1 wins counter
+int w2 = 0; // Player's 2 wins counter
+char result[64];
+
 int check_three_in_a_row(){
     // Check rows and columns
     for(int i = 0; i < 3; ++i) {
@@ -72,6 +76,11 @@ void btn_pressed(int b){
 			if(check_three_in_a_row()){
 				printk("Player 1 wins!\n");
 				clear_board();
+
+				// Update counter and display pop-up
+				w1++;
+				sprintf(result, "P1  %s  %d - %d  %s  P2", LV_SYMBOL_CLOSE, w1, w2, LV_SYMBOL_STOP);
+				iteml_display_popup("Player 1 wins!", result);
 			}
 			player_turn = 2;
 		}else{
@@ -81,6 +90,11 @@ void btn_pressed(int b){
 			if(check_three_in_a_row()){
 				printk("Player 2 wins!\n");
 				clear_board();
+
+				// Update counter and display pop-up
+				w2++;
+				sprintf(result, "P1  %s  %d - %d  %s  P2", LV_SYMBOL_CLOSE, w1, w2, LV_SYMBOL_STOP);
+				iteml_display_popup("Player 2 wins!", result);
 			}
 			player_turn = 1;
 		}
