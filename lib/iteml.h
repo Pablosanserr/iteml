@@ -79,6 +79,14 @@ void iteml_clean();
 void iteml_display_text(const char * text);
 
 /**
+ * @brief Displays text on a temporary pop-up message box
+ * 
+ * @param title Title of pop-up message box
+ * @param text Text of pop-up message box
+*/
+void iteml_display_popup(const char * title, const char * text);
+
+/**
  * @brief Get text written by user via touchscreen keyboard
  * 
  * @param buffer Text entered by user

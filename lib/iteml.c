@@ -149,6 +149,15 @@ void iteml_display_text(const char * text){
 	iteml_createLabel(text);
 }
 
+void iteml_display_popup(const char * title, const char * text){
+    // static const char * btns[] = {"Apply", "Close", ""};
+
+    lv_obj_t * popup_msg_box = lv_msgbox_create(NULL, title, text, NULL, true);
+    //lv_obj_t * popup_msg_box = lv_msgbox_create(NULL, "Hello", "This is a message box with two buttons.", btns, true);
+    lv_obj_add_event_cb(popup_msg_box, NULL, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_center(popup_msg_box);
+}
+
 void iteml_get_text_kb(char * buffer, const char * displayed_text){
 	iteml_request_text_kb(displayed_text);
 	strcpy(buffer, buff);
