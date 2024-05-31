@@ -1,6 +1,8 @@
 #include "iteml.h"
 
+#ifdef NRF
 struct k_sem sem;
+#endif
 
 char buff[100];
 
@@ -14,7 +16,7 @@ static lv_obj_t * currentButton = NULL;
 
 /**
  * @brief Initialize touch screen
- * 
+ *
  * @param text (Optional) Text displayed on the touch screen
 */
 void iteml_init(const char * text);
@@ -28,14 +30,14 @@ static void iteml_ta_event_cb(lv_event_t * e);
 static void iteml_btnm_handler(lv_event_t * e);
 /**
  * @brief Get text written by user via touch screen keyboard
- * 
+ *
  * @param buffer Text entered by user
  * @param displayed_text (Optional) Text displayed on the top. If NULL, no text is displayed
 */
 void iteml_request_text_kb(const char * displayed_text);
 /**
  * @brief Displays text on the touch screen. It can be re-colored by commands
- * 
+ *
  * @param buffer Text displayed
 */
 void iteml_createLabel(const char * text);
@@ -45,16 +47,24 @@ void iteml_createLabel(const char * text);
 void iteml_display_manager();
 
 void iteml_init(const char * text){
+    #ifdef NRF
 	k_sem_init(&sem, 0, 1);
+	#endif
 
+    #ifdef NRF
 	display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 	if (!device_is_ready(display_dev)) {
 		printk("[iteml_init] Device not ready, aborting test\n");
 		return;
 	}
+	#endif
 
 	if(text) iteml_createLabel(text);
+	#ifdef NRF
 	printk("[iteml_init] Touchscreen is ready\n");
+	#else
+	printf("[iteml_init] Touchscreen is ready\n");
+	#endif
 }
 
 static void iteml_ta_event_cb(lv_event_t * e)
@@ -62,7 +72,7 @@ static void iteml_ta_event_cb(lv_event_t * e)
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t * ta = lv_event_get_target(e);
     lv_obj_t * kb = lv_event_get_user_data(e);
-	
+
 	if(code == LV_EVENT_VALUE_CHANGED){
 		// printk("Value changed\n");
 	}
@@ -70,8 +80,9 @@ static void iteml_ta_event_cb(lv_event_t * e)
 	if(code == LV_EVENT_READY){
 		const char * msg = lv_textarea_get_text(ta);
 		strcpy(buff, msg);
-
+        #ifdef NRF
 		k_sem_give(&sem);
+		#endif
 	}
 
     if(code == LV_EVENT_FOCUSED) {
@@ -108,11 +119,15 @@ void iteml_request_text_kb(const char * displayed_text){
 
 	// Display on screen
 	lv_task_handler();
+	#ifdef NRF
 	display_blanking_off(display_dev);
+	#endif
 
+	#ifdef NRF
 	while (k_sem_take(&sem, K_MSEC(10))) {
 		lv_task_handler();
 	}
+	#endif
 }
 
 void iteml_createLabel(const char * text){
@@ -126,20 +141,28 @@ void iteml_createLabel(const char * text){
 
     // Display on screen
 	lv_task_handler();
+	#ifdef NRF
 	display_blanking_off(display_dev);
+	#endif
 }
 
 void iteml_display_manager(){
 	iteml_init(NULL);
 
 	lv_task_handler();
+	#ifdef NRF
 	display_blanking_off(display_dev);
+	#endif
+	#ifdef NRF
 	while (k_sem_take(&sem, K_MSEC(10))) {
 		lv_task_handler();
 	}
+	#endif
 }
 
+#ifdef NRF
 K_THREAD_DEFINE(thread_id, THREAD_STACK_SIZE, iteml_display_manager, NULL, NULL, NULL, THREAD_PRIORITY, 0, 0);
+#endif
 
 void iteml_clean(){
 	lv_obj_clean(lv_scr_act());
@@ -170,7 +193,9 @@ static void iteml_list_btn_handler(lv_event_t * e){
     lv_obj_t * info_label = lv_event_get_user_data(e);
     //printk(" ---> %s", lv_label_get_text(info2));
     if(code == LV_EVENT_CLICKED) {
+        #ifdef NRF
         printk("Clicked: %s\n", lv_list_get_btn_text(btn_list, obj));
+        #endif
 
         if(currentButton == obj) {
             currentButton = NULL;
@@ -236,7 +261,10 @@ void iteml_create_menu(int argc, ...){
             case ITEML_LOG:
                 if(log){
                     // TODO It should not be possible to create more than 1 log
+                    #ifdef NRF
                     printk("Error: Log is already created\n");
+                    #endif
+                    printf("Error: Log is already created\n");
                 }
                 log = lv_textarea_create(tab);
                 lv_textarea_set_cursor_click_pos(log, false);
@@ -310,7 +338,7 @@ void iteml_log_write(const char * buffer){
     lv_textarea_add_text(log, entry);
 }
 
-int iteml_set_text(int tab_id, const char * text){    
+int iteml_set_text(int tab_id, const char * text){
     lv_obj_t * content = lv_tabview_get_content(main_tabview);
     lv_obj_t * tab = lv_obj_get_child(content, tab_id);
     lv_obj_t * label = lv_obj_get_child(tab, NULL);
@@ -323,7 +351,7 @@ int iteml_set_text(int tab_id, const char * text){
     return ITEML_OK;
 }
 
-int iteml_set_btnm_map(int tab_id, const char * map){    
+int iteml_set_btnm_map(int tab_id, const char * map){
     lv_obj_t * content = lv_tabview_get_content(main_tabview);
     lv_obj_t * tab = lv_obj_get_child(content, tab_id);
     lv_obj_t * btnm = lv_obj_get_child(tab, NULL);

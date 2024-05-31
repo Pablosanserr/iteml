@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(SHIELD adafruit_2_8_tft_touch_v2)
 
+add_definitions(-DNRF)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(lvgl)
 

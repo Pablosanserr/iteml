@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifdef NRF
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -12,18 +13,19 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/display.h>
 #include <zephyr/drivers/gpio.h>
-#include <stdio.h>
-#include <string.h>
 #include <zephyr/kernel.h>
 
 #include <zephyr/drivers/display.h>
+#endif
 #include <lvgl.h>
 #include <time.h>
 
 // Threads
+#ifdef NRF
 #include <zephyr/sys/__assert.h>
 #define THREAD_STACK_SIZE 17408 // Same value as CONFIG_MAIN_STACK_SIZE
 #define THREAD_PRIORITY 7
+#endif
 
 // Touch screen resolution
 #define LV_HOR_RES_MAX 320
