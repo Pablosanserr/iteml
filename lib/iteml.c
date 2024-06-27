@@ -34,7 +34,7 @@ static void iteml_btnm_handler(lv_event_t * e);
  *
  * @param buffer Text displayed
 */
-void iteml_createLabel(const char * text);
+void iteml_create_label(const char * text);
 /**
  * @brief Thread that manages touch screen behavior
 */
@@ -54,7 +54,7 @@ void iteml_init(const char * text){
 	}
 	#endif
 
-	if(text) iteml_createLabel(text);
+	if(text) iteml_create_label(text);
 	#ifdef NRF
 	printk("[iteml_init] Touchscreen is ready\n");
 	#else
@@ -127,7 +127,7 @@ void iteml_request_text_kb(const char * displayed_text){
     lv_obj_del(ta);
 }
 
-void iteml_createLabel(const char * text){
+void iteml_create_label(const char * text){
 	//iteml_clean();
 
     lv_obj_t *label = lv_label_create(lv_scr_act());
@@ -160,7 +160,7 @@ void iteml_clean(){
 }
 
 void iteml_display_text(const char * text){
-	iteml_createLabel(text);
+	iteml_create_label(text);
 }
 
 void iteml_display_popup(const char * title, const char * text){
