@@ -2,6 +2,7 @@
 
 #ifdef NRF
 struct k_sem sem;
+struct k_sem kb_sem;
 #endif
 
 char buff[100];
@@ -29,13 +30,6 @@ static void iteml_ta_event_cb(lv_event_t * e);
 */
 static void iteml_btnm_handler(lv_event_t * e);
 /**
- * @brief Get text written by user via touch screen keyboard
- *
- * @param buffer Text entered by user
- * @param displayed_text (Optional) Text displayed on the top. If NULL, no text is displayed
-*/
-void iteml_request_text_kb(const char * displayed_text);
-/**
  * @brief Displays text on the touch screen. It can be re-colored by commands
  *
  * @param buffer Text displayed
@@ -49,6 +43,7 @@ void iteml_display_manager();
 void iteml_init(const char * text){
     #ifdef NRF
 	k_sem_init(&sem, 0, 1);
+	k_sem_init(&kb_sem, 0, 1);
 	#endif
 
     #ifdef NRF
@@ -81,7 +76,7 @@ static void iteml_ta_event_cb(lv_event_t * e)
 		const char * msg = lv_textarea_get_text(ta);
 		strcpy(buff, msg);
         #ifdef NRF
-		k_sem_give(&sem);
+        k_sem_give(&kb_sem);
 		#endif
 	}
 
@@ -97,8 +92,6 @@ static void iteml_ta_event_cb(lv_event_t * e)
 }
 
 void iteml_request_text_kb(const char * displayed_text){
-	iteml_clean();
-
 	// Create a keyboard to use it with the text area
     lv_obj_t * kb = lv_keyboard_create(lv_scr_act());
 
@@ -123,27 +116,25 @@ void iteml_request_text_kb(const char * displayed_text){
 	display_blanking_off(display_dev);
 	#endif
 
+    // Wait for the user to finish typing
 	#ifdef NRF
-	while (k_sem_take(&sem, K_MSEC(10))) {
-		lv_task_handler();
-	}
+	while (k_sem_take(&kb_sem, K_FOREVER));
 	#endif
+
+    // Delete keyboard elements
+    lv_obj_del(label);
+    lv_obj_del(kb);
+    lv_obj_del(ta);
 }
 
 void iteml_createLabel(const char * text){
-	iteml_clean();
+	//iteml_clean();
 
     lv_obj_t *label = lv_label_create(lv_scr_act());
     lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP); //Break the long lines
     lv_label_set_recolor(label, true); //Enable re-coloring by commands in the text
     lv_label_set_text(label, text);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-
-    // Display on screen
-	lv_task_handler();
-	#ifdef NRF
-	display_blanking_off(display_dev);
-	#endif
 }
 
 void iteml_display_manager(){
@@ -184,7 +175,6 @@ void iteml_display_popup(const char * title, const char * text){
 void iteml_get_text_kb(char * buffer, const char * displayed_text){
 	iteml_request_text_kb(displayed_text);
 	strcpy(buffer, buff);
-	iteml_createLabel("Intuitive Touchscreen Embedded Menu Library"); // TODO
 }
 
 static void iteml_list_btn_handler(lv_event_t * e){
