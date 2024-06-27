@@ -27,11 +27,11 @@
 #define THREAD_PRIORITY 7
 #endif
 
-// Touch screen resolution
+// Touch screen resolution for Adafruit 2.8'' TFT Touch Shield
 #define LV_HOR_RES_MAX 320
 #define LV_VER_RES_MAX 240
 
-// 
+// Return values
 #define ITEML_OK 1
 #define ITEML_ERROR -1
 
