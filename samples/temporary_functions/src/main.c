@@ -32,7 +32,7 @@ void main(void){
 			case 0:
 				printk("Button pressed: Write\n");
 				k_sleep(K_SECONDS(1));
-				iteml_get_text_kb(kb_buffer, "Write something");
+				iteml_get_text_kb(kb_buffer, "Write something", 1);
 				printk("User writes: %s\n", kb_buffer);
 
 				last_button_pressed = -1;

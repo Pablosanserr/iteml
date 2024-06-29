@@ -93,8 +93,9 @@ void iteml_display_popup(const char * title, const char * text);
  * 
  * @param buffer Text entered by user
  * @param displayed_text (Optional) Text displayed on the top. If NULL, no text is displayed
+ * @param set_bg If true, keyboard interface has a white background
 */
-void iteml_get_text_kb(char * buffer, const char * displayed_text);
+void iteml_get_text_kb(char * buffer, const char * displayed_text, int set_bg);
 
 /**
  * @brief Creates a custom tabview menu

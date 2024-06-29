@@ -91,7 +91,16 @@ static void iteml_ta_event_cb(lv_event_t * e)
     }
 }
 
-void iteml_request_text_kb(const char * displayed_text){
+void iteml_request_text_kb(const char * displayed_text, int set_bg){
+    // Create a white background (if applicable)
+    lv_obj_t * background;
+    if(set_bg){
+        background = lv_obj_create(lv_scr_act());
+        lv_obj_set_size(background, LV_HOR_RES_MAX, LV_VER_RES_MAX);
+        lv_obj_set_style_bg_color(background, lv_color_white(), LV_PART_MAIN);
+        lv_obj_set_pos(background, 0, 0);
+    }    
+
 	// Create a keyboard to use it with the text area
     lv_obj_t * kb = lv_keyboard_create(lv_scr_act());
 
@@ -122,6 +131,7 @@ void iteml_request_text_kb(const char * displayed_text){
 	#endif
 
     // Delete keyboard elements
+    if(set_bg) lv_obj_del(background);
     lv_obj_del(label);
     lv_obj_del(kb);
     lv_obj_del(ta);
@@ -172,8 +182,8 @@ void iteml_display_popup(const char * title, const char * text){
     lv_obj_center(popup_msg_box);
 }
 
-void iteml_get_text_kb(char * buffer, const char * displayed_text){
-	iteml_request_text_kb(displayed_text);
+void iteml_get_text_kb(char * buffer, const char * displayed_text, int set_bg){
+	iteml_request_text_kb(displayed_text, set_bg);
 	strcpy(buffer, buff);
 }
 
